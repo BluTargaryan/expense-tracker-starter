@@ -16,12 +16,22 @@ No test runner is configured.
 
 ## Architecture
 
-This is a single-page React 19 app built with Vite. All application logic lives in one file: `src/App.jsx`. There are no routes, no external state management library, and no backend — all data is held in component state and resets on page refresh.
+This is a single-page React 19 app built with Vite. There are no routes, no external state management library, and no backend — all data is held in component state and resets on page refresh.
 
-**Data model** — each transaction has: `{ id, description, amount, type, category, date }`. `type` is `"income"` or `"expense"`; `category` is one of `["food", "housing", "utilities", "transport", "entertainment", "salary", "other"]`.
+**Data model** — each transaction has: `{ id, description, amount, type, category, date }`. `amount` is always a number. `type` is `"income"` or `"expense"`; `category` is one of `["food", "housing", "utilities", "transport", "entertainment", "salary", "other"]`.
 
-**Known intentional issues** (this is a course starter meant to be fixed):
-- `amount` is stored as a string but used directly in `.reduce()` arithmetic, causing string concatenation instead of numeric addition — totals display incorrectly.
+**Component tree:**
+
+```
+App                        — owns transactions state; defines categories constant
+├── Summary                — receives transactions, computes totalIncome/totalExpenses/balance internally
+├── TransactionForm        — owns form field state; calls onAdd(transaction) prop on submit
+└── TransactionList        — receives transactions; owns filterType/filterCategory state and filter logic
+```
+
+`categories` is defined as a module-level constant in `App.jsx` and passed as a prop to both `TransactionForm` and `TransactionList`.
+
+**Known intentional issue** (this is a course starter meant to be fixed):
 - Transaction #4 ("Freelance Work") is marked `type: "expense"` but `category: "salary"` — a data inconsistency.
 - The UI has minimal styling and no delete/edit functionality.
 
